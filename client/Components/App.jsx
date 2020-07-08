@@ -1,4 +1,5 @@
 import React from 'react';
+import PasswordForm from './PasswordForm.jsx';
 
 class App extends React.Component {
   constructor() {
@@ -7,7 +8,9 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>hello world</div>
+      <div>
+        <PasswordForm />
+      </div>
     )
   }
 }
