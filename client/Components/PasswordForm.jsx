@@ -62,7 +62,7 @@ class PasswordForm extends React.Component {
   stillInvalid(caseObj) {
     const caseType = Object.keys(caseObj)[0];
     const isValid = caseObj[caseType];
-    if (isValid === 'black') {
+    if (isValid === 'black' || isValid === 'red') {
       this.setState({
         [caseType]: 'red'
       })
@@ -154,7 +154,7 @@ class PasswordForm extends React.Component {
 
   isAllValidated() {
     const { length, lowercase, uppercase, number, email, matched } = this.state;
-    if (length && lowercase && uppercase && number && email && matched) {
+    if (length === 'green' && lowercase === 'green' && uppercase === 'green' && number === 'green' && email === 'green' && matched) {
       return true;
     } 
     return false;
