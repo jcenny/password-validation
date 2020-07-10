@@ -33,7 +33,7 @@ class App extends React.Component {
   handleSubmit(password) {
     this.setState({
       password,
-      page: 'login'
+      page: 'confirmation'
     })
   }
 
@@ -42,7 +42,7 @@ class App extends React.Component {
     if (page === 'password') {
       return <PasswordForm email={email} handleSubmit={this.handleSubmit}/>
     } else {
-      return <h3>Validate your email to continue...</h3>
+      return <div>Account created, check email for verification link.</div>
     }
   }
 

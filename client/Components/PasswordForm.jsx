@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Navform, List, Input, Label, Button } from './Styles/PasswordFormStyles.jsx';
 
 const ListItem = styled.li`
 font-size: 14px;
@@ -9,48 +10,6 @@ padding-top: 5px;
 font-style: normal;
 `;
 
-const List = styled.ul`
-list-style-type: circle;
-padding: 10px 0px 30px 0px;
-font-size: 15px;
-font-style: italic;
-`;
-
-const NavForm = styled.div`
-display: flex;
-align-items: center;
-justify-content: center;
-padding-top: 60px;
-`
-const Input = styled.input`
-margin-right: 10px;
-width: 400px;
-height: 25px;
-font-size: 14px;
-border: 1px solid grey;
-border-radius: 7px;
-`
-const Label = styled.div`
-weight: 10px;
-font-size: 14px;
-color: grey;
-margin-bottom: 5px;
-margin-left: 3px;
-font-weight: 400;
-`
-
-const Button = styled.button`
-margin-left: 10px;
-background-color: white;
-border: 1px solid grey;
-border-radius: 10px;
-color: black;
-padding: 5px 10px;
-text-align: center;
-text-decoration: none;
-font-size: 14px;
-`
-
 class PasswordForm extends React.Component {
   constructor(props) {
     super(props);
@@ -58,13 +17,12 @@ class PasswordForm extends React.Component {
       type: 'password',
       password: '',
       confirm: '',
-      length: false,
-      lowercase: false,
-      uppercase: false,
-      number: false,
-      email: false,
-      validated: false,
-      matched: false,
+      length: 'black',
+      lowercase: 'black',
+      uppercase: 'black',
+      number: 'black',
+      email: 'black',
+      matched: 'black',
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -75,6 +33,7 @@ class PasswordForm extends React.Component {
     this.includesNumber = this.includesNumber.bind(this);
     this.isAllValidated = this.isAllValidated.bind(this);
     this.checkPasswordMatch = this.checkPasswordMatch.bind(this);
+    this.stillInvalid = this.stillInvalid.bind(this);
   }
 
   handleChange(event) {
@@ -94,8 +53,30 @@ class PasswordForm extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    const { password } = this.state;
-    this.props.handleSubmit(password);
+    const { password, length, lowercase, uppercase, number, email } = this.state;
+    if (this.isAllValidated()) {
+      this.props.handleSubmit(password);
+    }
+    //check each case
+    this.stillInvalid({ length });
+    this.stillInvalid({ lowercase });
+    this.stillInvalid({ uppercase });
+    this.stillInvalid({ number });
+    this.stillInvalid({ email });
+  }
+
+  stillInvalid(caseObj) {
+    const caseType = Object.keys(caseObj)[0];
+    const isValid = caseObj[caseType];
+    if (isValid === 'black') {
+      this.setState({
+        [caseType]: 'red'
+      })
+    } else {
+      this.setState({
+        [caseType]: 'green'
+      })
+    }
   }
 
   checkValidation() {
@@ -103,55 +84,50 @@ class PasswordForm extends React.Component {
     // check for password length
     if (password.length >= 8) {
       this.setState({
-        length: true,
+        length: 'green',
       })
     } else {
       this.setState({
-        length: false,
+        length: 'black',
       })
     }
     // check for lowercase and uppercase
     this.checkLetterCasing();
-
     // check for number
     if (this.includesNumber(password)) {
       this.setState({
-        number: true
+        number: 'green'
       })
     } else {
       this.setState({
-        number: false
+        number: 'black'
       })
     }
-
     // check for email 
     this.checkEmail();
-
-    // check for all validations
-    this.isAllValidated();
   }
 
   checkLetterCasing() {
     const { password } = this.state;
-    if (password.toUppercase !== password && password.toLowerCase() !== password) {
+    if (password.toUpperCase() !== password && password.toLowerCase() !== password) {
       this.setState({
-        lowercase: true,
-        uppercase: true
+        lowercase: 'green',
+        uppercase: 'green',
       })
     } else if (password.toUpperCase() !== password && password.toLowerCase() === password) {
       this.setState({
-        lowercase: true,
-        uppercase: false,
+        lowercase: 'green',
+        uppercase: 'black',
       })
     } else if (password.toUpperCase() === password && password.toLowerCase() !== password) {
       this.setState({
-        uppercase: true,
-        lowercase: false,
+        uppercase: 'green',
+        lowercase: 'black',
       })
     } else {
       this.setState({
-        uppercase: false,
-        lowercase: false,
+        uppercase: 'black',
+        lowercase: 'black',
       })
     }
   }
@@ -162,11 +138,11 @@ class PasswordForm extends React.Component {
     const emailStarter = email.split('@')[0];
     if (!password.includes(emailStarter) && password !== '') {
       this.setState({
-        email: true
+        email: 'green'
       })
     } else {
       this.setState({
-        email: false
+        email: 'black'
       })
     }
   }
@@ -183,16 +159,11 @@ class PasswordForm extends React.Component {
   }
 
   isAllValidated() {
-    const { length, lowercase, uppercase, number, email } = this.state;
-    if (length && lowercase && uppercase && number && email) {
-      this.setState({
-        validated: true,
-      })
-    } else {
-      this.setState({
-        validated: false,
-      })
-    }
+    const { length, lowercase, uppercase, number, email, matched } = this.state;
+    if (length && lowercase && uppercase && number && email && matched) {
+      return true;
+    } 
+    return false;
   }
 
   checkPasswordMatch() {
@@ -231,25 +202,25 @@ class PasswordForm extends React.Component {
           <input type='checkbox' onClick={this.handleShow} />
           <label style={{color: 'grey', fontSize: '16px'}}>Show</label>
           <List className='fa-ul'> Must contain the following: 
-            <ListItem color={!length ? 'black' : 'green'}>
-              {!length ? '8-72 Characters' : <div>8-72 Characters <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
+            <ListItem className='length' color={length}>
+              {length === 'black' ? '8-72 Characters' : <div>8-72 Characters <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
             </ListItem>
-            <ListItem color={!lowercase ? 'black' : 'green'}>
-              {!lowercase ? '1 Lowercase Character' : <div>1 Lowercase Character <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
+            <ListItem className='lowercase' color={lowercase}>
+              {lowercase === 'black' ? '1 Lowercase Character' : <div>1 Lowercase Character <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
             </ListItem>
-            <ListItem color={!uppercase ? 'black' : 'green'}>
-              {!uppercase ? '1 Uppercase Character' : <div>1 Uppercase Character <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
+            <ListItem className='uppercase' color={uppercase}>
+              {uppercase === 'black' ? '1 Uppercase Character' : <div>1 Uppercase Character <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
             </ListItem>
-            <ListItem color={!number ? 'black' : 'green'}>
-              {!number ? '1 Number' : <div>1 Number <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
+            <ListItem className='number' color={number}>
+              {number === 'black' ? '1 Number' : <div>1 Number <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
             </ListItem>
-            <ListItem color={!email ? 'black' : 'green'}>
-              {!email ? 'Should Not Match Your Email Address' : <div>Should Not Match Your Email Address <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
+            <ListItem className='email' color={email}>
+              {email === 'black' ? 'Should Not Match Your Email Address' : <div>Should Not Match Your Email Address <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
             </ListItem>
           </List>
           {confirm ? <Label>Confirm</Label> : ''}
           <Input type={type} placeholder='Confirm' name='confirm' value={confirm} onChange={this.handleChange} />
-          <i className="fa fa-check-circle" aria-hidden="true" style={!matched ? {color: 'grey'} : {color: 'green'}}></i>
+            <i className="fa fa-check-circle" aria-hidden="true" style={!matched ? {color: 'grey'} : {color: 'green'}}></i>
           <Button onClick={this.handleSubmit}>Submit</Button>
         </form>
       </NavForm>
