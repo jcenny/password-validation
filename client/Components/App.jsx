@@ -50,6 +50,7 @@ class App extends React.Component {
     return (
       <div>
         <GlobalStyle />
+        <h1>Create Password</h1>
         {this.handlePages()}
       </div>
     )

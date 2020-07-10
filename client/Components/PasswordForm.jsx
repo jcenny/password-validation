@@ -1,9 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const List = styled.li`
+const ListItem = styled.li`
 font-size: 14px;
 color: ${({ color }) => `${color};`};
+left: 40px;
+padding-top: 5px;
+font-style: normal;
+`;
+
+const List = styled.ul`
+list-style-type: circle;
+padding: 10px 0px 30px 0px;
+font-size: 15px;
+font-style: italic;
 `;
 
 const NavForm = styled.div`
@@ -15,6 +25,17 @@ padding-top: 50px;
 const Input = styled.input`
 margin: 5px;
 width: 400px;
+height: 25px;
+font-size: 14px;
+border: 1px solid grey;
+border-radius: 7px;
+`
+const Label = styled.div`
+weight: 10px;
+font-size: 14px;
+color: grey;
+margin-left: 7px;
+font-weight: 400;
 `
 
 class PasswordForm extends React.Component {
@@ -38,6 +59,7 @@ class PasswordForm extends React.Component {
     this.checkEmail = this.checkEmail.bind(this);
     this.checkLetterCasing = this.checkLetterCasing.bind(this);
     this.includesNumber = this.includesNumber.bind(this);
+    this.checkPasswordMatch = this.checkPasswordMatch.bind(this);
   }
 
   handleChange(event) {
@@ -46,8 +68,7 @@ class PasswordForm extends React.Component {
     this.setState({
       [name]: value
     }, () => {
-      this.checkValidation();
-    })
+      this.checkValidation()})
   }
 
   handleSubmit(event) {
@@ -137,6 +158,19 @@ class PasswordForm extends React.Component {
     return false;
   }
 
+  checkPasswordMatch() {
+    const { password, confirm } = this.state;
+    if (password === confirm) {
+      this.setState({
+        validated: true,
+      })
+    } else {
+      this.setState({
+        validated: false,
+      })
+    }
+  }
+
   handleShow() {
     const { type } = this.state;
     if (type === 'password') {
@@ -151,34 +185,34 @@ class PasswordForm extends React.Component {
   }
 
   render() {
-    const { password, confirm, type, length, lowercase, uppercase, number, email } = this.state;
+    const { password, confirm, type, length, lowercase, uppercase, number, email, validated } = this.state;
     return (
       <NavForm>
         <form>
-          <label>Password</label>
-          <Input type={type} name='password' value={password} onChange={this.handleChange} />
+          {password ? <Label>Password</Label> : <Label></Label>}
+          <Input type={type} name='password' placeholder='Password' value={password} onChange={this.handleChange} />
           <input type='checkbox' onClick={this.handleShow} />
           <label>Show</label>
-          <ul className='fa-ul' style={{ listStyleType: 'circle' }}>
-            <List color={!length ? 'black' : 'green'}>
+          <List className='fa-ul'> Must contain the following: 
+            <ListItem color={!length ? 'black' : 'green'}>
               {!length ? '8-72 Characters' : <div>8-72 Characters <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
-            </List>
-            <List color={!lowercase ? 'black' : 'green'}>
+            </ListItem>
+            <ListItem color={!lowercase ? 'black' : 'green'}>
               {!lowercase ? '1 Lowercase Character' : <div>1 Lowercase Character <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
-            </List>
-            <List color={!uppercase ? 'black' : 'green'}>
+            </ListItem>
+            <ListItem color={!uppercase ? 'black' : 'green'}>
               {!uppercase ? '1 Uppercase Character' : <div>1 Uppercase Character <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
-            </List>
-            <List color={!number ? 'black' : 'green'}>
+            </ListItem>
+            <ListItem color={!number ? 'black' : 'green'}>
               {!number ? '1 Number' : <div>1 Number <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
-            </List>
-            <List color={!email ? 'black' : 'green'}>
+            </ListItem>
+            <ListItem color={!email ? 'black' : 'green'}>
               {!email ? 'Should Not Match Your Email Address' : <div>Should Not Match Your Email Address <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
-            </List>
-          </ul>
-          <label>Confirm Password</label>
-          <Input type={type} name='confirm' value={confirm} onChange={this.handleChange} />
-          <i className="fa fa-check-circle" aria-hidden="true"></i>
+            </ListItem>
+          </List>
+          {confirm ? <Label>Confirm</Label> : ''}
+          <Input type={type} placeholder='Confirm' name='confirm' value={confirm} onChange={this.handleChange} />
+          {validated ? <i className="fa fa-check-circle" aria-hidden="true"></i> : ''}
           <button onClick={this.handleSubmit}>Submit</button>
         </form>
       </NavForm>
