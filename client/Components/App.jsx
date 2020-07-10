@@ -41,7 +41,7 @@ class App extends React.Component {
     const { page, email } = this.state;
     if (page === 'password') {
       return <PasswordForm email={email} handleSubmit={this.handleSubmit}/>
-    } else {
+    } else if (page === 'confirmation') {
       return <div>Account created, check email for verification link.</div>
     }
   }

@@ -1,14 +1,8 @@
 import React from 'react';
-import styled from 'styled-components';
-import { Navform, List, Input, Label, Button } from './Styles/PasswordFormStyles.jsx';
-
-const ListItem = styled.li`
-font-size: 14px;
-color: ${({ color }) => `${color};`};
-left: 40px;
-padding-top: 5px;
-font-style: normal;
-`;
+import Password from './Password.jsx';
+import ValidationList from './ValidationList.jsx';
+import Confirm from './Confirm.jsx';
+import { NavForm } from './Styles/PasswordFormStyles.jsx';
 
 class PasswordForm extends React.Component {
   constructor(props) {
@@ -22,7 +16,7 @@ class PasswordForm extends React.Component {
       uppercase: 'black',
       number: 'black',
       email: 'black',
-      matched: 'black',
+      matched: false,
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -197,31 +191,9 @@ class PasswordForm extends React.Component {
     return (
       <NavForm>
         <form>
-          {password ? <Label>Password</Label> : <Label></Label>}
-          <Input type={type} name='password' placeholder='Password' value={password} onChange={this.handleChange} />
-          <input type='checkbox' onClick={this.handleShow} />
-          <label style={{color: 'grey', fontSize: '16px'}}>Show</label>
-          <List className='fa-ul'> Must contain the following: 
-            <ListItem className='length' color={length}>
-              {length === 'black' ? '8-72 Characters' : <div>8-72 Characters <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
-            </ListItem>
-            <ListItem className='lowercase' color={lowercase}>
-              {lowercase === 'black' ? '1 Lowercase Character' : <div>1 Lowercase Character <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
-            </ListItem>
-            <ListItem className='uppercase' color={uppercase}>
-              {uppercase === 'black' ? '1 Uppercase Character' : <div>1 Uppercase Character <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
-            </ListItem>
-            <ListItem className='number' color={number}>
-              {number === 'black' ? '1 Number' : <div>1 Number <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
-            </ListItem>
-            <ListItem className='email' color={email}>
-              {email === 'black' ? 'Should Not Match Your Email Address' : <div>Should Not Match Your Email Address <i className="fa-il fa fa-check-circle" aria-hidden="true"></i></div>}
-            </ListItem>
-          </List>
-          {confirm ? <Label>Confirm</Label> : ''}
-          <Input type={type} placeholder='Confirm' name='confirm' value={confirm} onChange={this.handleChange} />
-            <i className="fa fa-check-circle" aria-hidden="true" style={!matched ? {color: 'grey'} : {color: 'green'}}></i>
-          <Button onClick={this.handleSubmit}>Submit</Button>
+          <Password password={password} type={type} handleChange={this.handleChange} handleShow={this.handleShow}/>
+          <ValidationList length={length} lowercase={lowercase} uppercase={uppercase} number={number} email={email}/>
+          <Confirm confirm={confirm} type={type} matched={matched} handleChange={this.handleChange} handleSubmit={this.handleSubmit}/>
         </form>
       </NavForm>
     )
